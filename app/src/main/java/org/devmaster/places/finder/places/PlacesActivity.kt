@@ -19,7 +19,7 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
 
     private lateinit var mBinding: ActivityPlacesBinding
 
-    private val mPresenter: PlacesContract.Presenter by lazy {
+    private val mPresenter: PlacesPresenter by lazy {
         PlacesPresenter(GooglePlacesServiceFactory.getGooglePlacesService(), this)
     }
 
@@ -40,7 +40,7 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         // Setup SearchView
         val item = menu.findItem(R.id.app_bar_search)
         val searchView: SearchView = item.actionView as SearchView
-        searchView.queryHint = "Pizza in Bauru"
+        searchView.queryHint = getString(R.string.search_hint)
         searchView.imeOptions = EditorInfo.IME_ACTION_SEARCH
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -92,8 +92,12 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         if (visible) hideState()
     }
 
-    override fun showError(error: Throwable) {
+    override fun showErrorPlaceholder() {
         showErrorState()
+    }
+
+    override fun showPlacesEmptyPlaceholder() {
+
     }
 
     override fun showPlaces(places: Iterable<Place>) {
@@ -108,17 +112,16 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
     }
 
     private fun showEmptyState() {
-        mBinding.imageView.setImageDrawable(mEmptyDrawable)
-        mBinding.imageView.visibility = View.VISIBLE
+        mBinding.emptyPlaceholder.visibility = View.VISIBLE
     }
 
     private fun showErrorState() {
-        mBinding.imageView.setImageDrawable(mErrorDrawable)
-        mBinding.imageView.visibility = View.VISIBLE
+        mBinding.errorPlaceholder.visibility = View.VISIBLE
     }
 
     private fun hideState() {
-        mBinding.imageView.visibility = View.GONE
+        mBinding.emptyPlaceholder.visibility = View.GONE
+        mBinding.errorPlaceholder.visibility = View.GONE
     }
 
 }

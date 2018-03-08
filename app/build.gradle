@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         // Keys
-        buildConfigField "String", "GOOGLE_API_KEY", "\"API_DO_GOOGLE\""
+        buildConfigField "String", "GOOGLE_API_KEY", "\"AIzaSyCbGHA5xlGK_27SkEZbb_iQBpC9M6UDoL0\""
     }
     buildTypes {
         release {
@@ -31,22 +31,47 @@ android {
             returnDefaultValues = true
         }
     }
+
+
+    flavorDimensions 'demo'
+    productFlavors {
+        fake {
+            dimension 'demo'
+        }
+        dev {
+            dimension 'demo'
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:support-compat:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.15.0'
     testImplementation "org.robolectric:robolectric:3.7.1"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     kapt "com.android.databinding:compiler:3.0.1"
+
+    androidTestImplementation 'com.squareup.rx.idler:rx2-idler:0.9.0'
+
+    // Android Support Libraries
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:support-compat:27.1.0'
+    implementation 'com.android.support:design:27.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Espresso
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation('com.android.support.test.espresso:espresso-contrib:3.0.1') {
+        // Necessary to avoid version conflicts
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'recyclerview-v7'
+    }
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'

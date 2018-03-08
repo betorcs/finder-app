@@ -2,4 +2,5 @@
     <string name="app_name">Finder</string>
     <string name="rating">%.01f</string>
     <string name="search">Search</string>
+    <string name="search_hint">Pizza in Bauru</string>
 </resources>

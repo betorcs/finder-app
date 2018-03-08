@@ -40,10 +40,20 @@
                 android:layout_height="wrap_content" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/errorPlaceholder"
+                android:src="@drawable/owl"
+                android:layout_gravity="center"
+                android:padding="16dp"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/emptyPlaceholder"
                 android:src="@drawable/nosearch"
                 android:layout_gravity="center"
                 android:padding="16dp"
+                android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

@@ -49,7 +49,7 @@ class PlacesPresenterTest {
         // Then
         val inOrder = Mockito.inOrder(mView)
         inOrder.verify(mView).setProgressIndicator(true)
-        inOrder.verify(mView).showPlaces(Mockito.anyCollection())
+        inOrder.verify(mView).showPlacesEmptyPlaceholder()
         inOrder.verify(mView).setProgressIndicator(false)
         inOrder.verifyNoMoreInteractions()
     }
@@ -70,7 +70,7 @@ class PlacesPresenterTest {
         // Then
         val inOrder = Mockito.inOrder(mView)
         inOrder.verify(mView).setProgressIndicator(true)
-        inOrder.verify(mView).showError(error)
+        inOrder.verify(mView).showErrorPlaceholder()
         inOrder.verify(mView).setProgressIndicator(false)
         inOrder.verifyNoMoreInteractions()
     }
