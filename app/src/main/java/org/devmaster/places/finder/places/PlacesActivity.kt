@@ -1,5 +1,6 @@
 package org.devmaster.places.finder.places
 
+import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_places.*
 import org.devmaster.places.finder.GooglePlacesServiceFactory
 import org.devmaster.places.finder.R
@@ -45,6 +47,9 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { text ->
+
+                    // Close keyboard
+                    hideSoftInput()
 
                     // Clear results
                     mAdapter.clear()
@@ -85,6 +90,11 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         super.onStop()
     }
 
+    private fun hideSoftInput() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+    }
+
     /* PlacesContract.View */
 
     override fun setProgressIndicator(visible: Boolean) {
@@ -97,22 +107,12 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
     }
 
     override fun showPlacesEmptyPlaceholder() {
-
+        mBinding.emptyPlaceholder.visibility = View.VISIBLE
     }
 
     override fun showPlaces(places: Iterable<Place>) {
         mAdapter.addAll(places)
         mAdapter.notifyDataSetChanged()
-
-        if (mAdapter.itemCount == 0) {
-            showEmptyState()
-        } else {
-            hideState()
-        }
-    }
-
-    private fun showEmptyState() {
-        mBinding.emptyPlaceholder.visibility = View.VISIBLE
     }
 
     private fun showErrorState() {

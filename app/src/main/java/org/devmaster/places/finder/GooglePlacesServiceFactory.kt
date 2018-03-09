@@ -21,7 +21,7 @@ class GooglePlacesServiceFactory {
             objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
             val retrofit = Retrofit.Builder()
-                    .client(OkHttpClientFactory.getOkHttpClient())
+                    .client(OkHttpClientProviderImpl.getInstance().getOkHttpClient())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(JacksonConverterFactory.create(objectMapper))
                     .baseUrl(BASE_URL)

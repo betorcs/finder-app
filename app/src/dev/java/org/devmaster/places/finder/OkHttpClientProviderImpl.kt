@@ -2,11 +2,14 @@ package org.devmaster.places.finder
 
 import okhttp3.OkHttpClient
 
-class OkHttpClientFactory {
+
+class OkHttpClientProviderImpl private constructor(): OkHttpClientProvider {
 
     companion object {
 
-        private val instance: OkHttpClient by lazy {
+        private var INSTANCE: OkHttpClientProviderImpl? = null
+
+        private val okHttpClient: OkHttpClient by lazy {
             OkHttpClient.Builder()
                     .addInterceptor { chain ->
                         val originalRequest = chain.request()
@@ -15,19 +18,26 @@ class OkHttpClientFactory {
                                 .addQueryParameter("key", BuildConfig.GOOGLE_API_KEY)
                                 .build()
 
-                        val req = originalRequest.newBuilder()
+                        val request = originalRequest.newBuilder()
                                 .url(httpUrl)
                                 .build()
 
-                        chain.proceed(req)
+                        chain.proceed(request)
                     }
                     .build()
         }
 
-        fun getOkHttpClient(): OkHttpClient {
-            return instance
+        fun getInstance(): OkHttpClientProviderImpl {
+            if (INSTANCE == null) {
+                INSTANCE = OkHttpClientProviderImpl()
+            }
+            return INSTANCE!!
         }
-
     }
+
+    override fun getOkHttpClient(): OkHttpClient {
+        return okHttpClient
+    }
+
 
 }

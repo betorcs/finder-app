@@ -25,9 +25,8 @@ class PlacesPresenter(private val service: GooglePlacesService,
         query?.let { query ->
 
             view.setProgressIndicator(true)
-
             disposable = service.search(query, pageToken)
-                    .subscribeOn(Schedulers.newThread())
+                    .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ response ->
                         pageToken = response.nextPageToken

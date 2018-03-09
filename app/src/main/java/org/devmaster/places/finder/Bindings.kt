@@ -12,7 +12,7 @@ object Bindings {
     @JvmStatic
     @BindingAdapter("imageUrl")
     fun imageUrl(view: ImageView, url: String) {
-        val okHttpClient = OkHttpClientFactory.getOkHttpClient()
+        val okHttpClient = OkHttpClientProviderImpl.getInstance().getOkHttpClient()
         Glide.get(view.context).registry
                 .replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(okHttpClient))
 

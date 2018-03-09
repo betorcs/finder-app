@@ -1,23 +1,15 @@
 package org.devmaster.places.finder.places
 
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.IdlingRegistry
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.contrib.RecyclerViewActions
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import com.squareup.rx2.idler.IdlingResourceScheduler
-import com.squareup.rx2.idler.Rx2Idler
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.TestScheduler
+import org.devmaster.places.finder.OkHttpClientProviderImpl
 import org.devmaster.places.finder.R
-import org.junit.After
-import org.junit.Before
+import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,26 +21,16 @@ class PlacesActivityEspressoTest {
 
     @Rule
     @JvmField
-    var mActivityRule: ActivityTestRule<PlacesActivity> = ActivityTestRule<PlacesActivity>(PlacesActivity::class.java)
+    var mActivityRule: ActivityTestRule<PlacesActivity>
+            = ActivityTestRule<PlacesActivity>(PlacesActivity::class.java)
 
-    private val mTestScheduler = TestScheduler()
-    private lateinit var mIdlingResource: IdlingResourceScheduler
-
-    @Before
-    fun setUp() {
-        RxJavaPlugins.setInitComputationSchedulerHandler(Rx2Idler.create("Computation Scheduler"))
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler(Rx2Idler.create("Main Thread Scheduler"))
-        RxJavaPlugins.setComputationSchedulerHandler({ mTestScheduler })
-        RxAndroidPlugins.setMainThreadSchedulerHandler({ mTestScheduler })
-        mIdlingResource = Rx2Idler.wrap(mTestScheduler, "Test Scheduler")
-        IdlingRegistry.getInstance()
-                .register(mIdlingResource)
-    }
 
     @Test
     fun onSearchProgress_loadingMustBeVisible() {
 
-        Thread.sleep(500)
+
+        // Use Fake flavor to run tests
+        OkHttpClientProviderImpl.result = OkHttpClientProviderImpl.RESULT_OK
 
         // Click in search icon
         onView(withId(R.id.app_bar_search))
@@ -62,10 +44,24 @@ class PlacesActivityEspressoTest {
         // Check if loading is displayed
         onView(withId(R.id.progressBar))
                 .check(matches(isDisplayed()))
+
+        Thread.sleep(1200)
+
+        // Empty view can not be displayed
+        onView(withId(R.id.emptyPlaceholder))
+                .check(matches(not(isDisplayed())))
+
+        // Neither error view
+        onView(withId(R.id.errorPlaceholder))
+                .check(matches(not(isDisplayed())))
+
     }
 
     @Test
-    fun onEmptyResult_emptyViewMustBeVisible() {
+    fun onSearchFinishedWithNoResults_shouldShowEmptyView() {
+
+        // Use Fake flavor to run tests
+        OkHttpClientProviderImpl.result = OkHttpClientProviderImpl.RESULT_EMTPY
 
         // Click in search icon
         onView(withId(R.id.app_bar_search))
@@ -73,23 +69,18 @@ class PlacesActivityEspressoTest {
 
         // Tap in search field and make a search
         onView(withHint(R.string.search_hint))
-                .perform(typeText("sdkjflskdjflsdlkfkldsjf"))
+                .perform(typeText("pizza"))
                 .perform(pressImeActionButton())
 
         // Check if loading is displayed
         onView(withId(R.id.progressBar))
                 .check(matches(isDisplayed()))
 
+        Thread.sleep(1200)
+
         // Check if empty view is shown
-        onView(withId(R.id.imageView))
+        onView(withId(R.id.emptyPlaceholder))
                 .check(matches(isDisplayed()))
     }
 
-    @After
-    fun tearDown() {
-        IdlingRegistry.getInstance()
-                .unregister(mIdlingResource)
-        RxJavaPlugins.reset()
-        RxAndroidPlugins.reset()
-    }
 }
